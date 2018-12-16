@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+     <TextView
+         android:layout_width="60dp"
+         android:layout_height="80dp"
+         android:id="@+id/theLetterText"
+         android:textColor="@color/colorPrimary"
+         android:textStyle="bold"
+         android:text="M"
+         android:textSize="40sp"
+         android:layout_margin="8dp"
+         android:padding="4dp"
+         android:layout_gravity="center_vertical"
+         android:gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="Med Name"
+        android:textColor="@color/colorPrimary"
+        android:layout_toEndOf="@id/theLetterText"
+        android:layout_margin="8dp"
+        android:textSize="20sp"
+        android:id="@+id/medicationName"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textColor="@color/colorPrimary"
+        android:text="Med Description"
+        android:layout_toEndOf="@id/theLetterText"
+        android:layout_margin="8dp"
+        android:textSize="15sp"
+        android:layout_below="@id/medicationName"
+        android:id="@+id/medicationDescription"/>
+
+</RelativeLayout>

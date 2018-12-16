@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "161403167762",
+    "firebase_url": "https://mymedicalproject-15a8f.firebaseio.com",
+    "project_id": "mymedicalproject-15a8f",
+    "storage_bucket": "mymedicalproject-15a8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161403167762:android:db4a501a3733869b",
+        "android_client_info": {
+          "package_name": "com.sani.shaheed.mymedicalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "161403167762-i1t69uh2ifmhudvhl6773d3h8emlm5sp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_ycRWssWDkx2jp4lcbOr64q73DNziPLA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

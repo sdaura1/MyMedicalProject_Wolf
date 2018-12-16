@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:context=".InsertActivity">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:padding="4dp"
+        app:cardElevation="16dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/medicationInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="8dp"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                android:text="@string/medication_information"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textSize="30sp"
+                android:textStyle="italic|bold" />
+
+            <ImageView
+                android:id="@+id/alarmingId"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:padding="4dp"
+                android:src="@drawable/ic_alarm_black_24dp" />
+
+            <TextView
+                android:id="@+id/medDosageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/dosage"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/med_name_id"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:hint="@string/medName"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/med_description_id"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:hint="@string/medDescription"
+                    android:inputType="textMultiLine"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/med_dosage"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:hint="@string/dosage"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/med_interval_id"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:hint="@string/interval"
+                    android:inputType="number"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/med_entryDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/deleteBin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_delete_black_24dp" />
+
+                <Button
+                    android:id="@+id/save_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="@string/save" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/alarmSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    app:switchPadding="40dp"
+                    app:thumbTint="@color/cardview_dark_background" />
+
+            </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

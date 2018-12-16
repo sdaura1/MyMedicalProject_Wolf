@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Medication Reminder</string>
+    <string name="add">Add</string>
+    <string name="facebook_app_id">[APP_ID]</string>
+    <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
+    <string name="medication_information">Medication Information</string>
+    <string name="medName">Name</string>
+    <string name="medDescription">Description</string>
+    <string name="interval">Interval</string>
+    <string name="save">Save</string>
+    <string name="update">UPDATE</string>
+    <string name="stop_alarm">Stop Alarm</string>
+    <string name="delete_image">Delete Image</string>
+    <string name="dosage_ne">Take: </string>
+    <string name="time_for_medication">Time For Medication</string>
+    <string name="dosage">Dosage</string>
+    <string name="select_color">Select Color</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="signin">SignIn</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sync">Sync</string>
+</resources>
