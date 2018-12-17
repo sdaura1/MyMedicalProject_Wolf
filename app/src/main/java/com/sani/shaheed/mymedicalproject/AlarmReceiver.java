@@ -13,9 +13,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
 
         PowerManager powerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                "Medication Reminder");
-        wakeLock.acquire(10);
+        if (powerManager!= null){
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "Medication Reminder");
+            wakeLock.acquire(10);
 
 
         if (intent != null && intent.hasExtra(InsertActivity.ALARM_EXTRA)){
@@ -27,5 +28,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         context.startActivity(i);
 
         wakeLock.release();
+        }
     }
 }

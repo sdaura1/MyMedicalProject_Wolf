@@ -11,6 +11,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,9 +27,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import static com.sani.shaheed.mymedicalproject.SignIn.u_id;
 
 public class InsertActivity extends AppCompatActivity {
 
@@ -39,11 +52,14 @@ public class InsertActivity extends AppCompatActivity {
     private EditText medNameEditText, medDescriptionEditText, medIntervalEditText, medDosageEditText;
     private ImageView alarmBell, deleteBin;
     private TextView entryDateTextView, medicationInfoTextView, medDosageTextView;
-    private String mName, mDes, mInt,  mEntry, mDosage;
+    private String mName, mDes, mInt,  mEntry, mDosage, userId;
     private Cursor cursor;
+    private String dataId;
     private Intent alarmIntent;
     private Intent intent;
     private Ringtone ringtone = null;
+    private FirebaseUser user;
+    private DatabaseReference databaseReference;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private SwitchCompat mySwitch;
@@ -57,6 +73,7 @@ public class InsertActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert);
 
         sqLiteHelper = new SQLiteHelper(this);
+        databaseReference = FirebaseDatabase.getInstance().getReference("Medications/Users");
 
         medNameEditText = findViewById(R.id.med_name_id);
         medDescriptionEditText = findViewById(R.id.med_description_id);
@@ -78,204 +95,50 @@ public class InsertActivity extends AppCompatActivity {
             alarmBell.setVisibility(View.GONE);
             medDosageTextView.setVisibility(View.GONE);
 
-            cursor = sqLiteHelper.getEntryById(position);
 
-                if (cursor.moveToFirst() && cursor != null) {
-                    do {
-                        alarmID = Integer.valueOf(cursor.getString(cursor.getColumnIndex("_ID")));
-                        mName = cursor.getString(cursor.getColumnIndex("medName"));
-                        mDes = cursor.getString(cursor.getColumnIndex("medDescription"));
-                        mInt = cursor.getString(cursor.getColumnIndex("medInterval"));
-                        mEntry = cursor.getString(cursor.getColumnIndex("entryDate"));
-                        mDosage = cursor.getString(cursor.getColumnIndex("dosage"));
-                        alarmOnOff = Integer.valueOf(cursor.getString(cursor.getColumnIndex("alarmOnOff")));
-                    } while (cursor.moveToNext());
-
-                    medNameEditText.setText(mName);
-                    medDescriptionEditText.setText(mDes);
-                    medIntervalEditText.setText(mInt);
-                    entryDateTextView.setText(mEntry);
-                    medDosageEditText.setText(mDosage);
-                    if (alarmOnOff == 0){
-                        mySwitch.setChecked(false);
-                    }else {
-                        mySwitch.setChecked(true);
-                    }
-
-                    cursor.close();
-                }
-
-            deleteBin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Snackbar.make(getCurrentFocus(), "Are you sure you want to delete ?", Snackbar.LENGTH_LONG)
-                            .setAction("YES", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    deleted = sqLiteHelper.deleteEntryById(position);
-                                    if (deleted){
-                                        cancelAlarm(position);
-                                        finish();
-                                    }else {
-                                        Toast.makeText(getApplicationContext(),
-                                                "Error in deleting!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }).show();
-                }
-            });
-
-
-            mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked){
-                        alarmOnOff = 1;
-                    }else {
-                        alarmOnOff = 0;
-                    }
-                }
-            });
-
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (medNameEditText.getText().toString().equals("")
-                                || medDescriptionEditText.getText().toString().equals("")
-                                || entryDateTextView.getText().toString().equals("")
-                                || medIntervalEditText.getText().toString().equals("")
-                                || medDosageEditText.getText().toString().equals("")){
-
-                            Toast.makeText(getApplicationContext(), "Everything is needed!",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }else {
-
-                            String updateName, updateDes, updateEntry;
-                            int updateInterval, updateDosage, updateAlarmOnOff;
-
-                            updateName = medNameEditText.getText().toString();
-                            updateDes = medDescriptionEditText.getText().toString();
-                            updateEntry = entryDateTextView.getText().toString();
-                            updateInterval = Integer.valueOf(medIntervalEditText.getText().toString());
-                            updateDosage = Integer.valueOf(medDosageEditText.getText().toString());
-                            updateAlarmOnOff = alarmOnOff;
-
-                            long i = sqLiteHelper.updateEntry(position, updateName, updateDes, updateInterval, updateEntry,updateDosage, updateAlarmOnOff);
-
-                            if (updateAlarmOnOff == 0){
-                                cancelAlarm(position);
-                                finish();
-                            }else {
-                                if (i > 0){
-                                    setAlarm(updateInterval, position);
-                                    finish();
-                                }else {
-                                    Toast.makeText(getApplicationContext(),
-                                            "Error in update", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                    }
-                });
         }else if (intent != null && intent.hasExtra(ALARM_EXTRA)){
 
             position = intent.getIntExtra(ALARM_EXTRA, position);
             deleteBin.setVisibility(View.GONE);
             mySwitch.setVisibility(View.GONE);
 
-            cursor = sqLiteHelper.getEntryById(position);
-
-            if (cursor.moveToFirst() && cursor != null){
-                do {
-                    mName = cursor.getString(cursor.getColumnIndex("medName"));
-                    mDosage = cursor.getString(cursor.getColumnIndex("dosage"));
-                }while (cursor.moveToNext());
-            }
-
-            medIntervalEditText.setVisibility(View.GONE);
-            medDescriptionEditText.setVisibility(View.GONE);
-            medNameEditText.setVisibility(View.GONE);
-            medDosageEditText.setVisibility(View.GONE);
-            medDosageTextView.setText("Dosage: " + mDosage);
-            medicationInfoTextView.setText(mName);
-            saveButton.setText(R.string.stop_alarm);
-
-            final Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
-            alarmBell.setImageResource(R.drawable.ic_alarm_black_24dp);
-
-            ringtone = RingtoneManager.getRingtone(this, uri);
-            ringtone.play();
-
+        }else if (intent != null && intent.hasExtra(u_id)){
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ringtone != null){
-                        ringtone.stop();
-                        finish();
-                    }
-                }
-            });
+                    mDes = medDescriptionEditText.getText().toString().trim();
+                    mDosage = medDosageEditText.getText().toString().trim();
+                    mEntry = entryDateTextView.getText().toString().trim();
+                    mName = medNameEditText.getText().toString().trim();
+                    mInt = medIntervalEditText.getText().toString().trim();
 
-        }else {
+                    if (mInt.isEmpty() || mName.isEmpty() || mEntry.isEmpty() || mDosage.isEmpty() || mDes.isEmpty()){
 
-            alarmBell.setVisibility(View.GONE);
-            medDosageTextView.setVisibility(View.GONE);
-            position = 0;
-            deleteBin.setVisibility(View.GONE);
-            mySwitch.setVisibility(View.GONE);
-
-            entryDateTextView.setText(new SimpleDateFormat("d - MMMM - yyyy", Locale.US)
-                    .format(Calendar.getInstance().getTime()));
-
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (medNameEditText.getText().toString().equals("")
-                            || medDescriptionEditText.getText().toString().equals("")
-                            || entryDateTextView.getText().toString().equals("")
-                            || medIntervalEditText.getText().toString().equals("")
-                            || medDosageEditText.getText().toString().equals("")){
-
-                        Toast.makeText(InsertActivity.this,
-                                "Everything is required!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InsertActivity.this, "Everything is needed", Toast.LENGTH_LONG).show();
 
                     }else {
 
-                        String newName, newDescription, newEntrydate;
-                        int newInterval, newDosage;
+                        Medicine medicine = new Medicine();
 
-                        newName= medNameEditText.getText().toString();
-                        newDescription = medDescriptionEditText.getText().toString();
-                        newEntrydate = entryDateTextView.getText().toString();
-                        newInterval = Integer.valueOf(medIntervalEditText.getText().toString());
-                        newDosage = Integer.valueOf(medDosageEditText.getText().toString());
-                        alarmOnOff = 1;
+                        medicine.setDate(mEntry);
+                        medicine.setDescription(mDes);
+                        medicine.setDosage(Integer.valueOf(mDosage));
+                        medicine.setInterval(Integer.valueOf(mInt));
+                        medicine.setName(mName);
+                        medicine.setId(userId);
 
-                        inserted = sqLiteHelper.insert(newName, newDescription, newInterval, newEntrydate, newDosage, alarmOnOff);
+                        String key = databaseReference.push().getKey();
 
-                        if (inserted > 0){
-
-                            cursor = sqLiteHelper.getEntryById((int) inserted);
-
-                            if (cursor.moveToFirst() && cursor != null){
-                                do {
-                                    alarmID = Integer.valueOf(cursor.getString(cursor.getColumnIndex("_ID")));
-                                }while (cursor.moveToNext());
-                            }
-
-                            setAlarm(newInterval, alarmID);
-                            finish();
-
-                        }else {
-                            Toast.makeText(getApplicationContext(),
-                                    "Error in saving!", Toast.LENGTH_SHORT).show();
+                        if (!key.isEmpty()){
+                            databaseReference.child(key).push().setValue(medicine).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        setAlarm(mInt, userId);
+                                    }
+                                }
+                            });
                         }
-
                     }
                 }
             });

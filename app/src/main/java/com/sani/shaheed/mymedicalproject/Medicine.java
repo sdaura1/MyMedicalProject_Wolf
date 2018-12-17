@@ -2,8 +2,8 @@ package com.sani.shaheed.mymedicalproject;
 
 public class Medicine {
 
-    int interval, id, dosage;
-    String medName, description, entrydate;
+    int interval, dosage;
+    String medName, description, entrydate, id;
 
     public Medicine(){
 
@@ -50,11 +50,11 @@ public class Medicine {
         this.entrydate = entrydate;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

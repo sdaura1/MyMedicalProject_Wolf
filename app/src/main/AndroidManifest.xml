@@ -21,13 +21,7 @@
 
         <activity
             android:name=".MedList"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".InsertActivity"
             android:screenOrientation="portrait" />
@@ -40,10 +34,21 @@
         <activity
             android:name=".RecordList"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".SignIn"
             android:screenOrientation="portrait" />
-        <activity android:name=".SignUp"></activity>
+
+        <activity android:name=".SignUp" />
+
+        <activity android:name=".SplashScreen"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -28,43 +28,29 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sani.shaheed.mymedicalproject.SignIn.u_id;
+
 public class MedList extends AppCompatActivity  {
 
-    private GoogleApiClient mGoogleApiClient;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser user;
-    private FirebaseAuth mAuth;
     public static final int RC_SIGN_IN = 9001;
     public static final String TAG = "MEDICATION LIST";
     private RecyclerView recordL;
+    private DatabaseReference databaseReference;
     private FloatingActionButton addButton;
     private SQLiteHelper sqLiteHelper;
     private Cursor cursor;
+    private String userId;
     private List<Medicine> medList;
     private Adapter adapter;
     private Medicine medicine;
-    private String userUID;
-    private String userEmail;
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        mAuth = FirebaseAuth.getInstance();
-//        mAuth.addAuthStateListener(mAuthListener);
-//
-//        user = mAuth.getCurrentUser();
-//        updateUI(user);
-//
-//    }
-//
-//    public void updateUI(FirebaseUser user){
-//        userUID = user.getUid();
-//        userEmail = user.getEmail();
-//    }
+    private Intent i;
+    private Medicine[] medicines;
 
 
     @Override
@@ -72,8 +58,31 @@ public class MedList extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
 
+        recordL = findViewById(R.id.recordL);
+        addButton = findViewById(R.id.theaddBtn);
+        sqLiteHelper = new SQLiteHelper(this);
+        medList = new ArrayList<>();
+
+        i = getIntent();
+
+        if (i != null && i.hasExtra(u_id)){
+            userId = i.getStringExtra(userId);
+            Intent newIntent = new Intent(this, InsertActivity.class);
+            newIntent.putExtra(u_id, userId);
+            startActivity(newIntent);
+        }
+
         getData();
 
+    }
+
+
+    private void syncToFirebase(Cursor cursor){
+        if(cursor.moveToFirst()){
+            do{
+                medicine = new Medicine();
+            }while(cursor.moveToNext());
+        }
     }
 
     private void getData() {
@@ -147,23 +156,11 @@ public class MedList extends AppCompatActivity  {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()){
-            case R.id.signInMenu:
-                Intent i = new Intent(this, SignIn.class);
-                startActivity(i);
-
-            case R.id.signOutMenu:
-                FirebaseAuth.getInstance().signOut();
+            case R.id.sync:
+//                syncToFirebase();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//
-//        if (mAuthListener != null){
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
-//    }
 }

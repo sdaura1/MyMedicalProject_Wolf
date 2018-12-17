@@ -1,5 +1,7 @@
 package com.sani.shaheed.mymedicalproject;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,17 +21,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class SignUp extends AppCompatActivity {
+
     private FirebaseUser user;
     private FirebaseAuth mAuth;
     private Button signup_button;
     private EditText email_signup, password_signup;
-    private String email, password, userEmail, userUID;
-
+    private String email, password;
+    public static final String errorMsg = "Field is required";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        mAuth = FirebaseAuth.getInstance();
 
         signup_button = findViewById(R.id.sign_up_button);
         email_signup = findViewById(R.id.emailAddressEdt_signUp);
@@ -43,19 +48,34 @@ public class SignUp extends AppCompatActivity {
                 password = password_signup.getText().toString();
 
                 if (email.isEmpty() || password.isEmpty()){
-                    Toast.makeText(SignUp.this, "Everything is needed", Toast.LENGTH_LONG).show();
+                    fieldErrorMessage();
                 }else {
                     signMeUp(email, password);
                 }
             }
         });
-
     }
 
     private void updateUI(FirebaseUser user) {
         if (user != null){
-            userEmail = user.getEmail();
-            userUID = user.getUid();
+            Intent i = new Intent(this, MedList.class);
+            i.putExtra("U_ID", String.valueOf(user.getUid()));
+            i.putExtra("U_Email", user.getEmail());
+            startActivity(i);
+            finish();
+        }
+    }
+
+    private void fieldErrorMessage() {
+        if (email_signup.getText() == null || password_signup.getText() == null){
+            if (email_signup.getText() == null){
+                email_signup.setError(errorMsg);
+            }else if (password_signup.getText() == null){
+                password_signup.setError(errorMsg);
+            }
+        }else if (email_signup.getText() == null && password_signup.getText() == null){
+            password_signup.setError(errorMsg);
+            email_signup.setError(errorMsg);
         }
     }
 
@@ -66,9 +86,7 @@ public class SignUp extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             user = mAuth.getCurrentUser();
-                            if (user != null){
                                 updateUI(user);
-                            }
                         }else {
                             updateUI(null);
                         }

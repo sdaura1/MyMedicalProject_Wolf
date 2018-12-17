@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -16,7 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,32 +27,20 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import static com.sani.shaheed.mymedicalproject.MedList.RC_SIGN_IN;
+import static com.sani.shaheed.mymedicalproject.SignUp.errorMsg;
 
 public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private EditText sEmail, sPassword;
     private Button sButton, signUp_in_button;
     private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInOptions gso;
+    private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private SignInButton google_signIn;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     public static final String TAG = "MEDICATION LIST";
-    private String uID;
-    private String uEmail;
-    private String uProviderId;
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-//        mAuth.addAuthStateListener(mAuthListener);
-//
-//        user = mAuth.getCurrentUser();
-//        if (user != null){
-//            updateUI(user);
-//        }
-    }
+    public static final String u_id = "U_ID";
+    public static final String u_email = "U_EMAIL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,17 +51,10 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
 
         sEmail = findViewById(R.id.emailAddressEdt_signIn);
         sPassword = findViewById(R.id.passwordEdt_signIn);
+        progressBar = findViewById(R.id.progress_bar);
 
         sButton = findViewById(R.id.sign_in_button);
         signUp_in_button = findViewById(R.id.sign_up_in_button);
-        google_signIn = findViewById(R.id.google_sign_in);
-
-        google_signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signInwithGoogle();
-            }
-        });
 
         sButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +80,11 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     }
 
     private void signMeIn(String email, String password) {
+        progressBar.setVisibility(View.VISIBLE);
+        sEmail.setEnabled(false);
+        sPassword.setEnabled(false);
+        sButton.setEnabled(false);
+        signUp_in_button.setEnabled(false);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -106,14 +92,19 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
+                                progressBar.setVisibility(View.GONE);
                                 user = mAuth.getCurrentUser();
                                 updateUI(user);
+                                finish();
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
                                 Toast.makeText(getApplicationContext(), "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
-                                updateUI(null);
+                                progressBar.setVisibility(View.GONE);
+                                Intent i = new Intent(getApplicationContext(), SignUp.class);
+                                startActivity(i);
+                                finish();
                             }
                         }
                     });
@@ -122,14 +113,13 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-
             if (result.isSuccess()){
                 GoogleSignInAccount account = result.getSignInAccount();
-
-                firebaseAuthWithGoogle(account);
+                if (account != null){
+                    firebaseAuthWithGoogle(account);
+                }
             }else {
                 Log.d(TAG, "onActivityResult: " + result.isSuccess());
             }
@@ -137,7 +127,7 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
     }
 
     private void signInwithGoogle(){
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestProfile()
@@ -162,34 +152,33 @@ public class SignIn extends AppCompatActivity implements GoogleApiClient.OnConne
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            if (user != null){
+                                updateUI(user);
+                            }
                         }
                     }
                 });
     }
 
     private void updateUI(FirebaseUser user) {
-        uID = user.getUid();
-        Log.d(TAG, "updateUI: " + uID);
-        uEmail = user.getEmail();
-        Log.d(TAG, "updateUI: " + uEmail);
+        if (user != null){
+            Intent i = new Intent(this, MedList.class);
+            i.putExtra(u_id, String.valueOf(user.getUid()));
+            i.putExtra(u_email, String.valueOf(user.getEmail()));
+            startActivity(i);
+        }
     }
 
     private void fieldErrorMessage() {
-
-        EditText email = findViewById(R.id.emailAddressEdt_signIn);
-        EditText pass = findViewById(R.id.passwordEdt_signIn);
-
-        if (email.getText() == null || pass.getText() == null){
-
-            if (email.getText() == null){
-                email.setBackgroundColor(Color.red(110000));
-            }else if (pass.getText() == null){
-                pass.setBackgroundColor(Color.red(110000));
+        if (sEmail.getText() == null || sPassword.getText() == null){
+            if (sEmail.getText() == null){
+                sEmail.setError(errorMsg);
+            }else if (sPassword.getText() == null){
+                sPassword.setError(errorMsg);
             }
-        }else if (email.getText() == null && pass.getText() == null){
-            pass.setBackgroundColor(Color.red(110000));
-            email.setBackgroundColor(Color.red(110000));
+        }else if (sEmail.getText() == null && sPassword.getText() == null){
+            sPassword.setError(errorMsg);
+            sEmail.setError(errorMsg);
         }
     }
 
