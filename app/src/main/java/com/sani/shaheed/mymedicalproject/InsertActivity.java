@@ -73,7 +73,7 @@ public class InsertActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert);
 
         sqLiteHelper = new SQLiteHelper(this);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Medications/Users");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Medications");
 
         medNameEditText = findViewById(R.id.med_name_id);
         medDescriptionEditText = findViewById(R.id.med_description_id);
@@ -127,14 +127,15 @@ public class InsertActivity extends AppCompatActivity {
                         medicine.setName(mName);
                         medicine.setId(userId);
 
-                        String key = databaseReference.push().getKey();
+                        String key = databaseReference.child("Users").push().getKey();
 
                         if (!key.isEmpty()){
                             databaseReference.child(key).push().setValue(medicine).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
-                                        setAlarm(mInt, userId);
+//                                        setAlarm(mInt, userId);
+//                                        task.getResult();
                                     }
                                 }
                             });
