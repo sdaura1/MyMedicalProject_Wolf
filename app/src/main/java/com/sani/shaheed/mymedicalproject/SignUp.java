@@ -20,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import static com.sani.shaheed.mymedicalproject.SignIn.u_email;
+import static com.sani.shaheed.mymedicalproject.SignIn.u_id;
+
 public class SignUp extends AppCompatActivity {
 
     private FirebaseUser user;
@@ -59,8 +62,8 @@ public class SignUp extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null){
             Intent i = new Intent(this, MedList.class);
-            i.putExtra("U_ID", String.valueOf(user.getUid()));
-            i.putExtra("U_Email", user.getEmail());
+            i.putExtra(u_id, String.valueOf(user.getUid()));
+            i.putExtra(u_email, user.getEmail());
             startActivity(i);
             finish();
         }

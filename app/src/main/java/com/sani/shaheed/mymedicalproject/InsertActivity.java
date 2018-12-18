@@ -39,7 +39,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import static com.sani.shaheed.mymedicalproject.SignIn.u_id;
 
@@ -53,7 +57,6 @@ public class InsertActivity extends AppCompatActivity {
     private ImageView alarmBell, deleteBin;
     private TextView entryDateTextView, medicationInfoTextView, medDosageTextView;
     private String mName, mDes, mInt,  mEntry, mDosage, userId;
-    private Cursor cursor;
     private String dataId;
     private Intent alarmIntent;
     private Intent intent;
@@ -63,6 +66,7 @@ public class InsertActivity extends AppCompatActivity {
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private SwitchCompat mySwitch;
+    private Map<String, Object> savingMap;
     private int position, alarmID, alarmOnOff;
     private boolean deleted;
     private long inserted;
@@ -86,6 +90,7 @@ public class InsertActivity extends AppCompatActivity {
         medicationInfoTextView = findViewById(R.id.medicationInfo);
         mySwitch = findViewById(R.id.alarmSwitch);
         deleteBin = findViewById(R.id.deleteBin);
+        savingMap = new HashMap<>();
 
         intent = getIntent();
 
@@ -127,9 +132,8 @@ public class InsertActivity extends AppCompatActivity {
                         medicine.setName(mName);
                         medicine.setId(userId);
 
-                        String key = databaseReference.child("Users").push().getKey();
+                        String key = databaseReference.child("Medication/Users").child(userId).push().getKey();
 
-                        if (!key.isEmpty()){
                             databaseReference.child(key).push().setValue(medicine).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -139,7 +143,6 @@ public class InsertActivity extends AppCompatActivity {
                                     }
                                 }
                             });
-                        }
                     }
                 }
             });
@@ -174,6 +177,10 @@ public class InsertActivity extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(),
                 "Alarm Set", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setUpFirebaseAdapter(){
+
     }
 
     @Override

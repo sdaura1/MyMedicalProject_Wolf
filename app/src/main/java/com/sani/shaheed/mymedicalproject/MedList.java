@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -42,12 +43,10 @@ public class MedList extends AppCompatActivity  {
     public static final String TAG = "MEDICATION LIST";
     private RecyclerView recordL;
     private DatabaseReference databaseReference;
+    private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
     private FloatingActionButton addButton;
-    private SQLiteHelper sqLiteHelper;
-    private Cursor cursor;
     private String userId;
     private List<Medicine> medList;
-    private Adapter adapter;
     private Medicine medicine;
     private Intent i;
     private Medicine[] medicines;
@@ -58,83 +57,46 @@ public class MedList extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
 
-        recordL = findViewById(R.id.recordL);
-        addButton = findViewById(R.id.theaddBtn);
-        sqLiteHelper = new SQLiteHelper(this);
-        medList = new ArrayList<>();
-
         i = getIntent();
+        userId = i.getStringExtra(u_id);
 
-        if (i != null && i.hasExtra(u_id)){
-            userId = i.getStringExtra(userId);
-            Intent newIntent = new Intent(this, InsertActivity.class);
-            newIntent.putExtra(u_id, userId);
-            startActivity(newIntent);
-        }
-
-        getData();
-
-    }
-
-
-    private void syncToFirebase(Cursor cursor){
-        if(cursor.moveToFirst()){
-            do{
-                medicine = new Medicine();
-            }while(cursor.moveToNext());
-        }
-    }
-
-    private void getData() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("Medication/Users/" + userId);
 
         recordL = findViewById(R.id.recordL);
         addButton = findViewById(R.id.theaddBtn);
-        sqLiteHelper = new SQLiteHelper(this);
         medList = new ArrayList<>();
 
-        cursor = sqLiteHelper.getAllEntries();
-
-        if (cursor.moveToFirst()) {
-            do {
-                medicine = new Medicine();
-                medicine.setId(cursor.getInt(cursor.getColumnIndex("_ID")));
-                medicine.setName(cursor.getString(cursor.getColumnIndex("medName")));
-                medicine.setDescription(cursor.getString(cursor.getColumnIndex("medDescription")));
-                medicine.setDate(cursor.getString(cursor.getColumnIndex("entryDate")));
-                medicine.setDosage(cursor.getInt(cursor.getColumnIndex("dosage")));
-
-                medList.add(medicine);
-            } while (cursor.moveToNext());
-        }
-
-        adapter = new Adapter(this, medList, new CustomItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent i = new Intent(MedList.this, InsertActivity.class);
-                int id = medList.get(position).getId();
-                i.putExtra(InsertActivity.EXTRA_IN, id);
-                startActivity(i);
-            }
-        });
-
-        DividerItemDecoration decoration = new DividerItemDecoration(this,
-                new LinearLayoutManager(this).getOrientation());
-
-        recordL.addItemDecoration(decoration);
-        recordL.setHasFixedSize(true);
-        recordL.setLayoutManager(new LinearLayoutManager(this));
-        recordL.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        setUpFirebaseAdapter();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MedList.this, InsertActivity.class));
+                i = getIntent();
+
+                if (i != null && i.hasExtra(u_id)){
+                    userId = i.getStringExtra(userId);
+                    Intent newIntent = new Intent(MedList.this, InsertActivity.class);
+                    newIntent.putExtra(u_id, userId);
+                    startActivity(newIntent);
+                }
             }
         });
 
-        cursor.close();
-        sqLiteHelper.close();
+    }
+
+    private void setUpFirebaseAdapter(){
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Medicine, FirebaseViewHolder>(
+                Medicine.class, R.layout.model_layout, FirebaseViewHolder.class, databaseReference
+        ) {
+            @Override
+            protected void populateViewHolder(FirebaseViewHolder viewHolder, Medicine model, int position) {
+                viewHolder.onBindViewHolder(model);
+            }
+        };
+
+        recordL.setHasFixedSize(true);
+        recordL.setLayoutManager(new LinearLayoutManager(this));
+        recordL.setAdapter(firebaseRecyclerAdapter);
     }
 
 
@@ -142,25 +104,11 @@ public class MedList extends AppCompatActivity  {
     protected void onResume() {
         super.onResume();
 
-        getData();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseRecyclerAdapter.cleanup();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()){
-            case R.id.sync:
-//                syncToFirebase();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 }

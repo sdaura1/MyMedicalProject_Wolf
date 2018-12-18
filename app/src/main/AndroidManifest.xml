@@ -32,10 +32,6 @@
         <!-- </intent-filter> -->
 
         <activity
-            android:name=".RecordList"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".SignIn"
             android:screenOrientation="portrait" />
 
