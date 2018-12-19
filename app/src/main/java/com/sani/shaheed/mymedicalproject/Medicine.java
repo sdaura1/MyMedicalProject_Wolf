@@ -9,12 +9,13 @@ public class Medicine {
 
     }
 
-    public Medicine(String medName, String description, int interval, String entrydate, int dosage){
+    public Medicine(String medName, String description, int interval, String entrydate, int dosage, String id){
         this.medName = medName;
         this.description = description;
         this.interval = interval;
         this.entrydate = entrydate;
         this.dosage = dosage;
+        this.id = id;
 
     }
 

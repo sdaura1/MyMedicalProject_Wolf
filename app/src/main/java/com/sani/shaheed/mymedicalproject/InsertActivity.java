@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,9 +38,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -56,8 +59,9 @@ public class InsertActivity extends AppCompatActivity {
     private EditText medNameEditText, medDescriptionEditText, medIntervalEditText, medDosageEditText;
     private ImageView alarmBell, deleteBin;
     private TextView entryDateTextView, medicationInfoTextView, medDosageTextView;
-    private String mName, mDes, mInt,  mEntry, mDosage, userId;
+    private String mName, mDes, mInt,  mEntry, mDosage, userId, the_date;
     private String dataId;
+    private Calendar calendar;
     private Intent alarmIntent;
     private Intent intent;
     private Ringtone ringtone = null;
@@ -67,9 +71,19 @@ public class InsertActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
     private SwitchCompat mySwitch;
     private Map<String, Object> savingMap;
+    private Date today;
+    private SimpleDateFormat simpleDateFormat;
     private int position, alarmID, alarmOnOff;
     private boolean deleted;
     private long inserted;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(this, MedList.class);
+        i.putExtra(u_id, userId);
+        startActivity(i);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +91,7 @@ public class InsertActivity extends AppCompatActivity {
         setContentView(R.layout.activity_insert);
 
         sqLiteHelper = new SQLiteHelper(this);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Medications");
+        databaseReference = FirebaseDatabase.getInstance().getReference("Medications/Users");
 
         medNameEditText = findViewById(R.id.med_name_id);
         medDescriptionEditText = findViewById(R.id.med_description_id);
@@ -91,6 +105,10 @@ public class InsertActivity extends AppCompatActivity {
         mySwitch = findViewById(R.id.alarmSwitch);
         deleteBin = findViewById(R.id.deleteBin);
         savingMap = new HashMap<>();
+        calendar = Calendar.getInstance();
+        simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+        the_date = simpleDateFormat.format(calendar.getTime());
+
 
         intent = getIntent();
 
@@ -108,6 +126,16 @@ public class InsertActivity extends AppCompatActivity {
             mySwitch.setVisibility(View.GONE);
 
         }else if (intent != null && intent.hasExtra(u_id)){
+
+            intent = getIntent();
+            userId = intent.getStringExtra(u_id);
+
+            alarmBell.setVisibility(View.GONE);
+            medDosageTextView.setVisibility(View.GONE);
+            entryDateTextView.setText(the_date);
+            deleteBin.setVisibility(View.GONE);
+            mySwitch.setVisibility(View.GONE);
+
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -132,14 +160,19 @@ public class InsertActivity extends AppCompatActivity {
                         medicine.setName(mName);
                         medicine.setId(userId);
 
-                        String key = databaseReference.child("Medication/Users").child(userId).push().getKey();
+                        String key = databaseReference.child(userId).getKey();
 
-                            databaseReference.child(key).push().setValue(medicine).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            databaseReference.child(key).child(mName).setValue(medicine).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
+                                        Intent i = new Intent(getApplicationContext(), MedList.class);
+                                        i.putExtra(u_id, userId);
+                                        startActivity(i);
 //                                        setAlarm(mInt, userId);
-//                                        task.getResult();
+                                    }else {
+                                        Toast.makeText(InsertActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                        Log.d(MedList.TAG, "onComplete: " + task.getException());
                                     }
                                 }
                             });

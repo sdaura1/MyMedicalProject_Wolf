@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
@@ -33,8 +35,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import static com.sani.shaheed.mymedicalproject.SignIn.u_email;
 import static com.sani.shaheed.mymedicalproject.SignIn.u_id;
 
 public class MedList extends AppCompatActivity  {
@@ -46,51 +50,59 @@ public class MedList extends AppCompatActivity  {
     private FirebaseRecyclerAdapter firebaseRecyclerAdapter;
     private FloatingActionButton addButton;
     private String userId;
-    private List<Medicine> medList;
-    private Medicine medicine;
+    private Calendar calendar;
+    private ArrayList<Medicine> medList;
     private Intent i;
-    private Medicine[] medicines;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
 
-        i = getIntent();
-        userId = i.getStringExtra(u_id);
-
-        databaseReference = FirebaseDatabase.getInstance().getReference("Medication/Users/" + userId);
-
         recordL = findViewById(R.id.recordL);
         addButton = findViewById(R.id.theaddBtn);
         medList = new ArrayList<>();
+        calendar = Calendar.getInstance();
+
+        i = getIntent();
+        userId = i.getStringExtra(u_id);
 
         setUpFirebaseAdapter();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                i = getIntent();
-
-                if (i != null && i.hasExtra(u_id)){
-                    userId = i.getStringExtra(userId);
+                if (userId.isEmpty()){
+                    Toast.makeText(MedList.this, "Error", Toast.LENGTH_SHORT).show();
+                }else {
                     Intent newIntent = new Intent(MedList.this, InsertActivity.class);
                     newIntent.putExtra(u_id, userId);
                     startActivity(newIntent);
                 }
             }
         });
-
     }
 
     private void setUpFirebaseAdapter(){
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("Medications/Users/" + userId);
+        databaseReference.keepSynced(true);
+
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Medicine, FirebaseViewHolder>(
                 Medicine.class, R.layout.model_layout, FirebaseViewHolder.class, databaseReference
         ) {
             @Override
-            protected void populateViewHolder(FirebaseViewHolder viewHolder, Medicine model, int position) {
-                viewHolder.onBindViewHolder(model);
+            protected void populateViewHolder(final FirebaseViewHolder viewHolder, Medicine model, int position) {
+                viewHolder.setAdapterDescription(model.getDescription());
+                viewHolder.setAdapterName(model.getName());
+                viewHolder.setLetterText(model.getName());
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), InsertActivity.class);
+                        startActivity(i);
+                    }
+                });
             }
         };
 
@@ -101,9 +113,15 @@ public class MedList extends AppCompatActivity  {
 
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        setUpFirebaseAdapter();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-
+        setUpFirebaseAdapter();
     }
 
     @Override
@@ -111,4 +129,31 @@ public class MedList extends AppCompatActivity  {
         super.onDestroy();
         firebaseRecyclerAdapter.cleanup();
     }
+
+    public static class FirebaseViewHolder extends RecyclerView.ViewHolder{
+
+        private View mView;
+        private TextView medName, medDescription, theLetterText;
+
+        public FirebaseViewHolder(View itemView){
+            super(itemView);
+            mView = itemView;
+        }
+
+        public void setAdapterName(String mName){
+            medName = mView.findViewById(R.id.medicationName);
+            medName.setText(mName);
+        }
+
+        public void setAdapterDescription(String mDesc){
+            medDescription = mView.findViewById(R.id.medicationDescription);
+            medDescription.setText(mDesc);
+        }
+
+        public void setLetterText(String letterText){
+            theLetterText = mView.findViewById(R.id.theLetterText);
+            theLetterText.setText(String.valueOf(letterText.charAt(0)).toUpperCase());
+        }
+    }
+
 }

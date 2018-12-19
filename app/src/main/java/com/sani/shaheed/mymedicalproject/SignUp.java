@@ -62,7 +62,7 @@ public class SignUp extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null){
             Intent i = new Intent(this, MedList.class);
-            i.putExtra(u_id, String.valueOf(user.getUid()));
+            i.putExtra(u_id, user.getUid());
             i.putExtra(u_email, user.getEmail());
             startActivity(i);
             finish();
