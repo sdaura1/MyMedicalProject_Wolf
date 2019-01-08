@@ -15,10 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- <meta-data -->
-        <!-- android:name="com.facebook.sdk.ApplicationId" -->
-        <!-- android:value="@string/facebook_app_id" /> -->
-
         <activity
             android:name=".MedList"
             android:screenOrientation="portrait">
@@ -33,9 +29,6 @@
             android:screenOrientation="portrait" />
 
         <receiver android:name=".AlarmReceiver" />
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED"/> -->
-        <!-- </intent-filter> -->
 
         <activity
             android:name=".RecordList"
@@ -43,7 +36,8 @@
         <activity
             android:name=".SignIn"
             android:screenOrientation="portrait" />
-        <activity android:name=".SignUp"></activity>
+        <activity android:name=".SignUp"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

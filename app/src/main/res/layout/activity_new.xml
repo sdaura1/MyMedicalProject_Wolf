@@ -27,7 +27,7 @@
         android:backgroundTint="@color/colorPrimaryDark"
         app:borderWidth="0dp"
         app:pressedTranslationZ="12dp"
-        app:elevation="30dp"
+        app:elevation="25dp"
         android:layout_margin="16dp"/>
 
 </FrameLayout>

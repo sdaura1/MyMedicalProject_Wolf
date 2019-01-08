@@ -11,6 +11,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "MEDICATION_DB";
     public static final String TB_NAME = "Medicine_TB";
     public static final int DB_VERSION = 1;
+    public static final String userTable = "User_TB";
     private SQLiteDatabase db;
     private ContentValues contentValues;
 
@@ -25,6 +26,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         "medDescription TEXT not null, medInterval INTEGER not null," +
                 " dosage INTEGER not null, entryDate TEXT not null," +
                 " alarmOnOff INTEGER not null)");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + userTable + "" +
+        "(_userId INTEGER primary key autoincrement, username TEXT not null, " +
+        " password TEXT not null)");
     }
 
     public long insert(String medName, String medDes, int medInterval, String entryDate, int dosage, int alarmOnOff){
