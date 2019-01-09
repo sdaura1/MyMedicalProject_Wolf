@@ -2,19 +2,20 @@ package com.sani.shaheed.mymedicalproject;
 
 public class Medicine {
 
-    int interval, id, dosage;
+    int interval, id, dosage, alarmOnOff;
     String medName, description, entrydate;
 
     public Medicine(){
 
     }
 
-    public Medicine(String medName, String description, int interval, String entrydate, int dosage){
+    public Medicine(String medName, String description, int interval, String entrydate, int dosage, int alarmOnOff) {
         this.medName = medName;
         this.description = description;
         this.interval = interval;
         this.entrydate = entrydate;
         this.dosage = dosage;
+        this.alarmOnOff = alarmOnOff;
 
     }
 
@@ -64,5 +65,13 @@ public class Medicine {
 
     public void setDosage(int dosage) {
         this.dosage = dosage;
+    }
+
+    public int getAlarmOnOff() {
+        return alarmOnOff;
+    }
+
+    public void setAlarmOnOff(int alarmOnOff) {
+        this.alarmOnOff = alarmOnOff;
     }
 }

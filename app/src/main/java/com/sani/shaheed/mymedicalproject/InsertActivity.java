@@ -1,26 +1,20 @@
 package com.sani.shaheed.mymedicalproject;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -190,6 +184,7 @@ public class InsertActivity extends AppCompatActivity {
             medDescriptionEditText.setVisibility(View.GONE);
             medNameEditText.setVisibility(View.GONE);
             medDosageEditText.setVisibility(View.GONE);
+            saveButton.setBackgroundResource(R.drawable.ic_close_black_24dp);
 
             cursor = sqLiteHelper.getEntryById(position);
 
@@ -202,7 +197,6 @@ public class InsertActivity extends AppCompatActivity {
 
             medDosageTextView.setText("Dosage: " + mDosage);
             medicationInfoTextView.setText(mName);
-            saveButton.setBackgroundResource(R.drawable.ic_close_black_24dp);
 
             final Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
@@ -231,6 +225,7 @@ public class InsertActivity extends AppCompatActivity {
 
             alarmBell.setVisibility(View.GONE);
             medDosageTextView.setVisibility(View.GONE);
+            saveButton.setBackgroundResource(R.drawable.ic_check_black_24dp);
             position = 0;
             deleteBin.setVisibility(View.GONE);
             mySwitch.setVisibility(View.GONE);
@@ -261,8 +256,6 @@ public class InsertActivity extends AppCompatActivity {
                         newEntrydate = entryDateTextView.getText().toString();
                         newInterval = Integer.valueOf(medIntervalEditText.getText().toString());
                         newDosage = Integer.valueOf(medDosageEditText.getText().toString());
-                        alarmOnOff = 1;
-                        saveButton.setBackgroundResource(R.drawable.ic_check_black_24dp);
 
                         inserted = sqLiteHelper.insert(newName, newDescription, newInterval, newEntrydate, newDosage, alarmOnOff);
 

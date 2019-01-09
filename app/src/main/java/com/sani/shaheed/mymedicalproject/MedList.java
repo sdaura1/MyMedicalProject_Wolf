@@ -18,14 +18,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MedList extends AppCompatActivity  {
 
     public static final int RC_SIGN_IN = 9001;
+    public static final String REQ_TAG = "VACTIVITY";
     public static final String TAG = "MEDICATION LIST";
     private RecyclerView recordL;
+    private static final String URL = "http://123.123.123.123";
     private FloatingActionButton addButton;
     private SQLiteHelper sqLiteHelper;
     private Cursor cursor;
@@ -35,6 +46,8 @@ public class MedList extends AppCompatActivity  {
     private PendingIntent pendingIntent;
     private Adapter adapter;
     private Medicine medicine;
+    private RequestQueue requestQueue;
+    private JsonObjectRequest postForm;
     private Intent incomingIntent;
 
     @Override
@@ -43,6 +56,8 @@ public class MedList extends AppCompatActivity  {
         setContentView(R.layout.activity_new);
 
         recordL = findViewById(R.id.recordL);
+        requestQueue = RequestQueueSingleton.getInstance(this.getApplicationContext())
+                .getRequestQueue();
         incomingIntent = getIntent();
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -137,6 +152,59 @@ public class MedList extends AppCompatActivity  {
         sqLiteHelper.close();
     }
 
+    public void getJsonResponse() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "onResponse: " + response.toString());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "onErrorResponse: " + error);
+            }
+        });
+        jsonObjectRequest.setTag(REQ_TAG);
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void postInJson() {
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, getMedicationsInJson(),
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+    }
+
+    public String getMedicationsInJson() {
+        List<Medicine> medicines = new ArrayList<>();
+        sqLiteHelper = new SQLiteHelper(getApplicationContext());
+        cursor = sqLiteHelper.getAllEntries();
+        if (cursor.moveToFirst()) {
+            do {
+                Medicine medicine = new Medicine();
+                medicine.setId(cursor.getInt(cursor.getColumnIndex("_ID")));
+                medicine.setName(cursor.getString(cursor.getColumnIndex("medName")));
+                medicine.setDescription(cursor.getString(cursor.getColumnIndex("medDescription")));
+                medicine.setDate(cursor.getString(cursor.getColumnIndex("entryDate")));
+                medicine.setDosage(cursor.getInt(cursor.getColumnIndex("dosage")));
+                medicine.setAlarmOnOff(cursor.getInt(cursor.getColumnIndex("alarmOnOff")));
+                medicines.add(medicine);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteHelper.close();
+        return new Gson().toJson(medicines);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -156,6 +224,9 @@ public class MedList extends AppCompatActivity  {
         switch (item.getItemId()) {
             case R.id.sync:
                 startActivity(new Intent(this, SignIn.class));
+                break;
+            case R.id.push:
+                getMedicationsInJson();
                 break;
         }
         return super.onOptionsItemSelected(item);
