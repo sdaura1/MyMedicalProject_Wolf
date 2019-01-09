@@ -26,10 +26,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         "medDescription TEXT not null, medInterval INTEGER not null," +
                 " dosage INTEGER not null, entryDate TEXT not null," +
                 " alarmOnOff INTEGER not null)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS " + userTable + "" +
-        "(_userId INTEGER primary key autoincrement, username TEXT not null, " +
-        " password TEXT not null)");
+//
+//        db.execSQL("CREATE TABLE IF NOT EXISTS " + userTable + "" +
+//        "(_userId INTEGER primary key autoincrement, username TEXT not null, " +
+//        " password TEXT not null)");
     }
 
     public long insert(String medName, String medDes, int medInterval, String entryDate, int dosage, int alarmOnOff){

@@ -4,14 +4,17 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -32,6 +35,7 @@ public class MedList extends AppCompatActivity  {
     private PendingIntent pendingIntent;
     private Adapter adapter;
     private Medicine medicine;
+    private Intent incomingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,7 @@ public class MedList extends AppCompatActivity  {
         setContentView(R.layout.activity_new);
 
         recordL = findViewById(R.id.recordL);
+        incomingIntent = getIntent();
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -132,6 +137,29 @@ public class MedList extends AppCompatActivity  {
         sqLiteHelper.close();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        if (incomingIntent != null) {
+            menu.findItem(R.id.sync).setVisible(false);
+            menu.findItem(R.id.push).setVisible(true);
+        } else {
+            menu.findItem(R.id.push).setVisible(false);
+            menu.findItem(R.id.sync).setVisible(true);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sync:
+                startActivity(new Intent(this, SignIn.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onResume() {
