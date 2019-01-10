@@ -24,10 +24,10 @@
         android:padding="4dp"
         app:fabSize="auto"
         android:src="@drawable/ic_add_black_24dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         app:borderWidth="0dp"
         app:pressedTranslationZ="12dp"
-        app:elevation="30dp"
+        app:elevation="25dp"
         android:layout_margin="16dp"/>
 
 </FrameLayout>

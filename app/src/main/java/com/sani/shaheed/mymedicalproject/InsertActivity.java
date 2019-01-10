@@ -11,6 +11,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class InsertActivity extends AppCompatActivity {
     public static final String EXTRA_IN = "UPDATE_ID";
     public static final String ALARM_EXTRA = "ALARM_EXTRA";
     private SQLiteHelper sqLiteHelper;
-    private Button saveButton;
+    private FloatingActionButton saveButton;
     private EditText medNameEditText, medDescriptionEditText, medIntervalEditText, medDosageEditText;
     private ImageView alarmBell, deleteBin;
     private TextView entryDateTextView, medicationInfoTextView, medDosageTextView;
@@ -73,7 +74,7 @@ public class InsertActivity extends AppCompatActivity {
         intent = getIntent();
 
         if (intent != null && intent.hasExtra(EXTRA_IN)){
-            saveButton.setText(R.string.update);
+            saveButton.setBackgroundResource(R.drawable.ic_update_black_24dp);
             position = intent.getIntExtra(EXTRA_IN, position);
             alarmBell.setVisibility(View.GONE);
             medDosageTextView.setVisibility(View.GONE);
@@ -185,6 +186,10 @@ public class InsertActivity extends AppCompatActivity {
             position = intent.getIntExtra(ALARM_EXTRA, position);
             deleteBin.setVisibility(View.GONE);
             mySwitch.setVisibility(View.GONE);
+            medIntervalEditText.setVisibility(View.GONE);
+            medDescriptionEditText.setVisibility(View.GONE);
+            medNameEditText.setVisibility(View.GONE);
+            medDosageEditText.setVisibility(View.GONE);
 
             cursor = sqLiteHelper.getEntryById(position);
 
@@ -195,20 +200,22 @@ public class InsertActivity extends AppCompatActivity {
                 }while (cursor.moveToNext());
             }
 
-            medIntervalEditText.setVisibility(View.GONE);
-            medDescriptionEditText.setVisibility(View.GONE);
-            medNameEditText.setVisibility(View.GONE);
-            medDosageEditText.setVisibility(View.GONE);
             medDosageTextView.setText("Dosage: " + mDosage);
             medicationInfoTextView.setText(mName);
-            saveButton.setText(R.string.stop_alarm);
+            saveButton.setBackgroundResource(R.drawable.ic_close_black_24dp);
 
             final Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
             alarmBell.setImageResource(R.drawable.ic_alarm_black_24dp);
 
-            ringtone = RingtoneManager.getRingtone(this, uri);
-            ringtone.play();
+            if (cursor != null && ringtone != null && ringtone.isPlaying()){
+                ringtone.stop();
+                ringtone = RingtoneManager.getRingtone(this, uri);
+                ringtone.play();
+            }else {
+                ringtone = RingtoneManager.getRingtone(this, uri);
+                ringtone.play();
+            }
 
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -255,6 +262,7 @@ public class InsertActivity extends AppCompatActivity {
                         newInterval = Integer.valueOf(medIntervalEditText.getText().toString());
                         newDosage = Integer.valueOf(medDosageEditText.getText().toString());
                         alarmOnOff = 1;
+                        saveButton.setBackgroundResource(R.drawable.ic_check_black_24dp);
 
                         inserted = sqLiteHelper.insert(newName, newDescription, newInterval, newEntrydate, newDosage, alarmOnOff);
 
