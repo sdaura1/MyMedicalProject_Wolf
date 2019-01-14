@@ -169,7 +169,7 @@ public class MedList extends AppCompatActivity  {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public void postInJson() {
+//    public void postInJson() {
 //        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, getMedicationsInJson(),
 //                new Response.Listener<JSONObject>() {
 //                    @Override
@@ -182,7 +182,7 @@ public class MedList extends AppCompatActivity  {
 //
 //            }
 //        });
-    }
+//    }
 
     public String getMedicationsInJson() {
         List<Medicine> medicines = new ArrayList<>();
