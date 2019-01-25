@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Medication Reminder</string>
+    <string name="app_name">MedR</string>
     <string name="add">Add</string>
     <string name="facebook_app_id">[APP_ID]</string>
     <string name="fb_login_protocol_scheme">fb[APP_ID]</string>
