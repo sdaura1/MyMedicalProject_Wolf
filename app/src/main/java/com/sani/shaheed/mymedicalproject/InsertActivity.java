@@ -1,26 +1,20 @@
 package com.sani.shaheed.mymedicalproject;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,7 +31,8 @@ public class InsertActivity extends AppCompatActivity {
     public static final String ALARM_EXTRA = "ALARM_EXTRA";
     private SQLiteHelper sqLiteHelper;
     private FloatingActionButton saveButton;
-    private EditText medNameEditText, medDescriptionEditText, medIntervalEditText, medDosageEditText;
+    private EditText medNameEditText, medDescriptionEditText, medIntervalEditText,
+            medDosageEditText;
     private ImageView alarmBell, deleteBin;
     private TextView entryDateTextView, medicationInfoTextView, medDosageTextView;
     private String mName, mDes, mInt,  mEntry, mDosage;
@@ -83,13 +78,15 @@ public class InsertActivity extends AppCompatActivity {
 
                 if (cursor.moveToFirst() && cursor != null) {
                     do {
-                        alarmID = Integer.valueOf(cursor.getString(cursor.getColumnIndex("_ID")));
+                        alarmID = Integer.valueOf(cursor.getString(
+                                cursor.getColumnIndex("_ID")));
                         mName = cursor.getString(cursor.getColumnIndex("medName"));
                         mDes = cursor.getString(cursor.getColumnIndex("medDescription"));
                         mInt = cursor.getString(cursor.getColumnIndex("medInterval"));
                         mEntry = cursor.getString(cursor.getColumnIndex("entryDate"));
                         mDosage = cursor.getString(cursor.getColumnIndex("dosage"));
-                        alarmOnOff = Integer.valueOf(cursor.getString(cursor.getColumnIndex("alarmOnOff")));
+                        alarmOnOff = Integer.valueOf(cursor.getString(
+                                cursor.getColumnIndex("alarmOnOff")));
                     } while (cursor.moveToNext());
 
                     medNameEditText.setText(mName);
@@ -110,7 +107,8 @@ public class InsertActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    Snackbar.make(getCurrentFocus(), "Are you sure you want to delete ?", Snackbar.LENGTH_LONG)
+                    Snackbar.make(getCurrentFocus(), "Are you sure you want to delete ?",
+                            Snackbar.LENGTH_LONG)
                             .setAction("YES", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -120,7 +118,8 @@ public class InsertActivity extends AppCompatActivity {
                                         finish();
                                     }else {
                                         Toast.makeText(getApplicationContext(),
-                                                "Error in deleting!", Toast.LENGTH_SHORT).show();
+                                                "Error in deleting!", Toast.LENGTH_SHORT)
+                                                .show();
                                     }
                                 }
                             }).show();
@@ -164,7 +163,8 @@ public class InsertActivity extends AppCompatActivity {
                             updateDosage = Integer.valueOf(medDosageEditText.getText().toString());
                             updateAlarmOnOff = alarmOnOff;
 
-                            long i = sqLiteHelper.updateEntry(position, updateName, updateDes, updateInterval, updateEntry,updateDosage, updateAlarmOnOff);
+                            long i = sqLiteHelper.updateEntry(position, updateName, updateDes,
+                                    updateInterval, updateEntry, updateDosage, updateAlarmOnOff);
 
                             if (updateAlarmOnOff == 0){
                                 cancelAlarm(position);
@@ -264,7 +264,8 @@ public class InsertActivity extends AppCompatActivity {
                         alarmOnOff = 1;
                         saveButton.setBackgroundResource(R.drawable.ic_check_black_24dp);
 
-                        inserted = sqLiteHelper.insert(newName, newDescription, newInterval, newEntrydate, newDosage, alarmOnOff);
+                        inserted = sqLiteHelper.insert(newName, newDescription, newInterval,
+                                newEntrydate, newDosage, alarmOnOff);
 
                         if (inserted > 0){
 
@@ -272,7 +273,8 @@ public class InsertActivity extends AppCompatActivity {
 
                             if (cursor.moveToFirst() && cursor != null){
                                 do {
-                                    alarmID = Integer.valueOf(cursor.getString(cursor.getColumnIndex("_ID")));
+                                    alarmID = Integer.valueOf(cursor.getString(
+                                            cursor.getColumnIndex("_ID")));
                                 }while (cursor.moveToNext());
                             }
 
@@ -293,7 +295,8 @@ public class InsertActivity extends AppCompatActivity {
     private void cancelAlarm(int alarmId){
 
         alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmId, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), alarmId,
+                alarmIntent, 0);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         if (alarmManager != null){
@@ -310,7 +313,8 @@ public class InsertActivity extends AppCompatActivity {
 
         alarmIntent = new Intent(getApplicationContext(), AlarmReceiver.class);
         alarmIntent.putExtra(ALARM_EXTRA, medAlarmId);
-        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), medAlarmId, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), medAlarmId,
+                alarmIntent, 0);
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + interval,
