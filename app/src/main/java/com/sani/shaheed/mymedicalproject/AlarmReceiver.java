@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
+import com.sani.shaheed.mymedicalproject.activities.InsertActivity;
+
 public class AlarmReceiver extends BroadcastReceiver {
 
     int medID;

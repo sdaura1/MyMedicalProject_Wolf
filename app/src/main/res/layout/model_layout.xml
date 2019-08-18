@@ -8,7 +8,7 @@
          android:layout_width="60dp"
          android:layout_height="80dp"
          android:id="@+id/theLetterText"
-         android:textColor="@color/colorPrimary"
+         android:textColor="@color/colorPrimaryDark"
          android:textStyle="bold"
          android:text="M"
          android:textSize="40sp"
@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:text="Med Name"
-        android:textColor="@color/colorPrimary"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/colorPrimaryDark"
         android:layout_toEndOf="@id/theLetterText"
         android:layout_margin="8dp"
         android:textSize="20sp"
@@ -32,12 +33,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="4dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:text="Med Description"
+        android:fontFamily="sans-serif-condensed"
         android:layout_toEndOf="@id/theLetterText"
         android:layout_margin="8dp"
         android:textSize="15sp"
         android:layout_below="@id/medicationName"
         android:id="@+id/medicationDescription"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="Med Counting"
+        android:layout_margin="8dp"
+        android:textSize="15sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/medicationName"
+        android:id="@+id/medicationCounting"/>
 
 </RelativeLayout>

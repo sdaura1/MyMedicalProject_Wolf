@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MedList">
+    tools:context=".activities.MedList">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         android:padding="4dp"
         app:fabSize="auto"
         android:src="@drawable/ic_add_black_24dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimary"
         app:borderWidth="0dp"
         app:pressedTranslationZ="12dp"
         app:elevation="25dp"

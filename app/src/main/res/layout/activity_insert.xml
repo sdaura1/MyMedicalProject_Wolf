@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    tools:context=".InsertActivity">
+    tools:context=".activities.InsertActivity">
 
     <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_margin="10dp"
+        android:layout_margin="16dp"
         android:padding="4dp"
-        app:cardElevation="16dp">
+        app:cardElevation="4dp">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -26,13 +26,14 @@
 
             <TextView
                 android:id="@+id/medicationInfo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:text="@string/medication_information"
+                android:gravity="center"
+                android:padding="4dp"
+                android:fontFamily="sans-serif-condensed"
+                android:text="@string/med_info"
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textSize="30sp"
@@ -53,6 +54,7 @@
                 android:layout_margin="8dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:fontFamily="sans-serif-light"
                 android:padding="4dp"
                 android:text="@string/dosage"
                 android:textColor="#000"
@@ -68,46 +70,85 @@
 
                 <EditText
                     android:id="@+id/med_name_id"
-                    android:layout_width="200dp"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/medName"
+                    android:textStyle="bold"
                     android:inputType="text"
                     android:padding="16dp"
                     android:textAlignment="center" />
 
                 <EditText
                     android:id="@+id/med_description_id"
-                    android:layout_width="200dp"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/medDescription"
+                    android:textStyle="bold"
                     android:inputType="textMultiLine"
                     android:padding="16dp"
                     android:textAlignment="center" />
 
                 <EditText
                     android:id="@+id/med_dosage"
-                    android:layout_width="200dp"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/dosage"
                     android:inputType="number"
+                    android:textStyle="bold"
                     android:padding="16dp"
                     android:textAlignment="center" />
 
                 <EditText
                     android:id="@+id/med_interval_id"
-                    android:layout_width="200dp"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/interval"
                     android:inputType="number"
+                    android:textStyle="bold"
                     android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/med_start_date"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:hint="@string/start_date"
+                    android:inputType="date"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:padding="16dp"
+                    android:textAlignment="center" />
+
+                <EditText
+                    android:id="@+id/med_end_date"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:hint="@string/finish_date"
+                    android:padding="16dp"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:fontFamily="sans-serif-thin"
                     android:textAlignment="center" />
 
                 <TextView
@@ -116,6 +157,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="8dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="Date Text View"
+                    android:textStyle="bold"
                     android:padding="16dp"
                     android:textAlignment="center" />
 

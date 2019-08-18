@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.sani.shaheed.mymedicalproject.activities.MedList;
+
 public class SignUp extends AppCompatActivity {
     private Button signup_button;
     private EditText email_signup, password_signup;
